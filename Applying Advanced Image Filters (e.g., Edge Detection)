@@ -1,0 +1,21 @@
+# Apply edge detection filter to each frame for a unique artistic effect
+for i in range(100):
+    # Convert features to frame
+    frame = features[0].cpu().numpy()
+    frame = np.moveaxis(frame, 0, -1)
+    frame = np.uint8(np.clip(frame * 255, 0, 255))
+
+    # Apply edge detection using Canny edge detector
+    edges = cv2.Canny(frame, 100, 200)  # Apply edge detection
+
+    # Convert edge image back to RGB by stacking the edges into three channels
+    edges_rgb = cv2.merge([edges, edges, edges])
+
+    # Optional: Apply color inversion or color map for enhanced effect
+    edges_rgb = cv2.applyColorMap(edges_rgb, cv2.COLORMAP_JET)
+
+    # Write the processed frame to the video
+    video_writer.write(edges_rgb)
+
+# Release the video writer object
+video_writer.release()
