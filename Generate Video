@@ -1,0 +1,23 @@
+# Import OpenCV and NumPy
+import cv2
+import numpy as np
+
+# Create a video writer object
+fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Video codec format
+video_writer = cv2.VideoWriter('output_video.avi', fourcc, 30, (224, 224))  # Output path and settings
+
+# Generate 100 frames of video
+for i in range(100):  # Assuming we generate 100 frames
+    # Convert the image features to video frames
+    frame = features[0].cpu().numpy()  # Convert the feature tensor to a NumPy array
+    frame = np.moveaxis(frame, 0, -1)  # Reorder axes for proper image format
+    frame = np.uint8(np.clip(frame * 255, 0, 255))  # Normalize and convert to image
+
+    # Simple dynamic effect: vertical shift
+    frame = np.roll(frame, shift=i//5, axis=0)  # Apply vertical shift to the image
+
+    # Write the frame to the video
+    video_writer.write(frame)
+
+# Release the video writer object
+video_writer.release()
