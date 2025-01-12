@@ -1,0 +1,29 @@
+# Create a video writer object for the new dynamic video with effects
+video_writer = cv2.VideoWriter('output_video_with_effects.avi', fourcc, 30, (224, 224))
+
+# Apply color effects and additional transformations
+for i in range(100):
+    # Convert features to frame
+    frame = features[0].cpu().numpy()
+    frame = np.moveaxis(frame, 0, -1)
+    frame = np.uint8(np.clip(frame * 255, 0, 255))
+
+    # Apply color filter: Invert colors for an artistic effect
+    frame = cv2.bitwise_not(frame)  # Invert the colors (negative effect)
+
+    # Apply a sepia filter to the frame for an additional visual effect
+    sepia_filter = np.array([[0.393, 0.769, 0.189],
+                             [0.349, 0.686, 0.168],
+                             [0.272, 0.534, 0.131]])
+    frame = cv2.transform(frame, sepia_filter)  # Apply the sepia filter
+    frame = np.uint8(np.clip(frame, 0, 255))  # Ensure the pixel values are within valid range
+
+    # Apply a simple fade effect: gradually darken the image over time
+    fade_factor = 1 - (i / 200.0)  # Gradually decrease brightness
+    frame = np.uint8(np.clip(frame * fade_factor, 0, 255))  # Apply fade effect
+
+    # Write the processed frame to the video
+    video_writer.write(frame)
+
+# Release the video writer object
+video_writer.release()
