@@ -1,0 +1,23 @@
+# Create a new video writer object for text animations
+video_writer = cv2.VideoWriter('output_with_text_animation.avi', fourcc, 30, (224, 224))
+
+# Generate frames with text animations
+for i in range(100):
+    # Convert features to frame
+    frame = features[0].cpu().numpy()
+    frame = np.moveaxis(frame, 0, -1)
+    frame = np.uint8(np.clip(frame * 255, 0, 255))
+
+    # Add a moving text caption to the frame
+    font = cv2.FONT_HERSHEY_SIMPLEX  # Font style
+    text = f"Frame {i+1}"  # Example text with frame number
+    position = (int(100 + (i * 2) % 200), 50)  # Text moves horizontally
+
+    # Add text to the frame
+    cv2.putText(frame, text, position, font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+    # Write the frame to the video
+    video_writer.write(frame)
+
+# Release the video writer object
+video_writer.release()
