@@ -1,0 +1,10 @@
+# Import necessary libraries
+import torch
+import torchvision.models as models
+
+# Load pre-trained VGG16 model
+model = models.vgg16(pretrained=True)
+model.eval()  # Set the model to evaluation mode
+
+# Print the model architecture to inspect it
+print(model)
