@@ -1,0 +1,6 @@
+# Extract features using the VGG16 model
+with torch.no_grad():  # Disable gradient calculation to save memory
+    features = model.features(input_batch)  # Extract image features from the model
+
+# Print the shape of the extracted features
+print(features.shape)
