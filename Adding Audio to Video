@@ -1,0 +1,22 @@
+# Importing necessary libraries for audio processing
+from pydub import AudioSegment
+from moviepy.editor import VideoFileClip, AudioFileClip
+
+# Load the video file and audio file
+video = VideoFileClip("output_video_with_effects.avi")  # Load generated video
+audio = AudioSegment.from_file("background_music.mp3")  # Load background music
+
+# Convert the audio to the appropriate format (matching the video's length)
+audio = audio.set_duration(video.duration)  # Set audio duration to match video duration
+
+# Export audio as WAV format
+audio.export("background_music.wav", format="wav")
+
+# Load the audio and video clips into moviepy for final combination
+audio_clip = AudioFileClip("background_music.wav")  # Load the audio track
+final_video = video.set_audio(audio_clip)  # Set audio for the video
+
+# Save the final video with audio
+final_video.write_videofile("final_output_with_audio.mp4", codec="libx264", audio_codec="aac")
+
+print("Video with audio has been created!")
