@@ -1,0 +1,34 @@
+# Import additional libraries for transformations
+import math
+
+# Create a video writer object again to ensure the previous one is properly released
+video_writer = cv2.VideoWriter('output_dynamic_video.avi', fourcc, 30, (224, 224))
+
+# Generate 100 frames with more dynamic effects
+for i in range(100):
+    # Convert the features to frames as before
+    frame = features[0].cpu().numpy()  # Convert the tensor to a NumPy array
+    frame = np.moveaxis(frame, 0, -1)  # Reorder axes for proper format
+    frame = np.uint8(np.clip(frame * 255, 0, 255))  # Normalize to 0-255 range
+
+    # Apply a simple dynamic effect: Horizontal shift and rotate
+    shift_x = i // 5  # Horizontal shift value
+    frame = np.roll(frame, shift=shift_x, axis=1)  # Horizontal shift
+
+    # Apply rotation: Rotate the frame by an angle (in degrees)
+    angle = (i * 2) % 360  # Rotate with an increasing angle
+    M = cv2.getRotationMatrix2D((frame.shape[1]//2, frame.shape[0]//2), angle, 1)
+    frame = cv2.warpAffine(frame, M, (frame.shape[1], frame.shape[0]))
+
+    # Apply zoom effect: Scale the image slightly
+    zoom_factor = 1 + (math.sin(i / 10.0) * 0.1)  # Zoom in and out dynamically
+    frame = cv2.resize(frame, None, fx=zoom_factor, fy=zoom_factor, interpolation=cv2.INTER_LINEAR)
+
+    # Resize the frame back to the original size after zoom
+    frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_LINEAR)
+
+    # Write the frame to the video
+    video_writer.write(frame)
+
+# Release the video writer object
+video_writer.release()
