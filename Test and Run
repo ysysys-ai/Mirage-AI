@@ -1,0 +1,4 @@
+# Run the image to video conversion function
+image_to_video('sample_image.jpg', 'output_video.avi')
+
+print("Video generation complete!")
