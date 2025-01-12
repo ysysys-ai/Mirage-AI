@@ -1,0 +1,22 @@
+# Create a new video writer object for animated transitions
+video_writer = cv2.VideoWriter('output_with_transitions.avi', fourcc, 30, (224, 224))
+
+# Create a smooth transition between frames using alpha blending
+for i in range(100):
+    # Convert features to frame
+    frame = features[0].cpu().numpy()
+    frame = np.moveaxis(frame, 0, -1)
+    frame = np.uint8(np.clip(frame * 255, 0, 255))
+
+    # Apply a fade effect using alpha blending
+    if i > 0:
+        prev_frame = prev_frame * (1 - (i / 100.0)) + frame * (i / 100.0)  # Blend current frame with previous frame
+        prev_frame = np.uint8(np.clip(prev_frame, 0, 255))  # Clip the values
+    else:
+        prev_frame = frame  # For the first frame, no blending is done
+
+    # Write the blended frame to the video
+    video_writer.write(prev_frame)
+
+# Release the video writer object
+video_writer.release()
