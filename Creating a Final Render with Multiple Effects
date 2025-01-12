@@ -1,0 +1,35 @@
+# Create a final video with all combined effects
+video_writer = cv2.VideoWriter('final_video_with_all_effects.avi', fourcc, 30, (224, 224))
+
+# Apply all effects and write them into the final video
+for i in range(100):
+    # Convert features to frame
+    frame = features[0].cpu().numpy()
+    frame = np.moveaxis(frame, 0, -1)
+    frame = np.uint8(np.clip(frame * 255, 0, 255))
+
+    # Apply rotation and zoom
+    angle = (i * 2) % 360
+    M = cv2.getRotationMatrix2D((frame.shape[1]//2, frame.shape[0]//2), angle, 1)
+    frame = cv2.warpAffine(frame, M, (frame.shape[1], frame.shape[0]))
+
+    zoom_factor = 1 + (math.sin(i / 10.0) * 0.1)
+    frame = cv2.resize(frame, None, fx=zoom_factor, fy=zoom_factor, interpolation=cv2.INTER_LINEAR)
+    frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_LINEAR)
+
+    # Add text animation (moving text)
+    text = f"Effect {i+1}"
+    cv2.putText(frame, text, (int(100 + (i * 2) % 200), 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+    # Add edge detection filter
+    edges = cv2.Canny(frame, 100, 200)
+    edges_rgb = cv2.merge([edges, edges, edges])
+    edges_rgb = cv2.applyColorMap(edges_rgb, cv2.COLORMAP_JET)
+
+    # Write the frame with all effects
+    video_writer.write(edges_rgb)
+
+# Release the video writer object
+video_writer.release()
+
+print("Final video with all effects has been created!")
