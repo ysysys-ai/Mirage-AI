@@ -1,0 +1,16 @@
+# Finalize video export in multiple formats
+final_video_writer = cv2.VideoWriter('final_output_video.mp4', cv2.VideoWriter_fourcc(*'MP4V'), 30, (224, 224))
+
+# Reapply the effects and write the final version of the video
+for i in range(100):
+    # Convert features to frame
+    frame = features[0].cpu().numpy()
+    frame = np.moveaxis(frame, 0, -1)
+    frame = np.uint8(np.clip(frame * 255, 0, 255))
+
+    # Apply more complex effects if desired
+    # In this case, we just write the frame after processing
+    final_video_writer.write(frame)
+
+# Release the final video writer object and save the video
+final_video_writer.release()
